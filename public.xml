@@ -4,13 +4,13 @@
     <title lang="EN">evb62's LMS Plugins</title>
   </details>
   <plugins>
-    <plugin name="ConsumeMode" version="1.0.0" minTarget="8.0.0" maxTarget="*">
+    <plugin name="ConsumeMode" version="1.0.1" minTarget="8.0.0" maxTarget="*">
       <title lang="EN">Consume Mode</title>
       <desc lang="EN">Removes each track from the play queue once it has finished playing or has been skipped, the same way MPD's consume mode works. Enabled per player from Settings - Player.</desc>
       <category>misc</category>
       <creator>evb62</creator>
-      <url>https://github.com/evb62/lms-consume-mode/releases/download/v1.0.0/ConsumeMode-1.0.0.zip</url>
-      <sha>8126433C6CD5B88BED914B7DAC25B7B4E3E69A89</sha>
+      <url>https://github.com/evb62/lms-consume-mode/releases/download/v1.0.1/ConsumeMode-1.0.1.zip</url>
+      <sha>DAD46285677B9B3A5974E3959F0FC8F84F7726F0</sha>
     </plugin>
   </plugins>
 </extensions>
