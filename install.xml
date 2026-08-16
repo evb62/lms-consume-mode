@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension>
+	<module>Plugins::ConsumeMode::Plugin</module>
+	<name>PLUGIN_CONSUMEMODE</name>
+	<description>PLUGIN_CONSUMEMODE_DESC</description>
+	<version>1.0.0</version>
+	<creator>Local</creator>
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>8.0.0</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
