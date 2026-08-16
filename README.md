@@ -36,3 +36,6 @@ reason for the transition.
   first matching entry is removed.
 - Synced groups are handled at the master player; set the preference on the
   master.
+
+## Installation
+- Add https://raw.githubusercontent.com/evb62/lms-consume-mode/main/public.xml to "Additional Repositories" to "Manage Plugins" settings page on LMS.
