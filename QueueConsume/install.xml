@@ -3,7 +3,7 @@
 	<module>Plugins::QueueConsume::Plugin</module>
 	<name>PLUGIN_QUEUECONSUME</name>
 	<description>PLUGIN_QUEUECONSUME_DESC</description>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<creator>evb62</creator>
 	<targetApplication>
 		<id>SlimServer</id>
