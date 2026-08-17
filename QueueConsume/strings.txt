@@ -1,14 +1,14 @@
 PLUGIN_CONSUMEMODE
-	EN	Consume Mode
+	EN	Queue Consume
 
 PLUGIN_CONSUMEMODE_DESC
-	EN	Removes each track from the play queue once it has finished playing or has been skipped, the same way MPD's consume mode works. Jumping directly to another track in the queue leaves the track you jumped away from in place.
+	EN	Removes each track from the play queue once it has finished playing or has been skipped. Jumping directly to another track in the queue leaves in place the track you jumped away from.
 
 PLUGIN_CONSUMEMODE_BASIC_DESC
-	EN	These options apply to every player. Consume mode itself is switched on per player, under Settings - Player.
+	EN	These options apply to every player. Queue consume itself is switched on per player, under Settings - Player - Extra Settings - Queue Consume.
 
 PLUGIN_CONSUMEMODE_ENABLE
-	EN	Consume mode
+	EN	Queue consume
 
 PLUGIN_CONSUMEMODE_ENABLE_DESC
 	EN	Remove tracks from this player's queue after they have played or been skipped.
