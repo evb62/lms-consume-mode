@@ -14,7 +14,7 @@ sub name {
 }
 
 sub page {
-	return Slim::Web::HTTP::CSRF->protectURI('plugins/ConsumeMode/settings/player.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/QueueConsume/settings/player.html');
 }
 
 sub needsClient { 1 }
