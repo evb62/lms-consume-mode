@@ -8,9 +8,9 @@ Enabled per player, in the web UI.
 
 ## Use
 
-Settings -> Player -> pick the player -> Queue Consume -> tick the box.
+Settings -> Player -> pick the player -> Extra Settings -> Queue Consume -> tick the box.
 
-Two global options live under  Server Settings -> Manage Plugins -> Queue Consume -> Settings:
+Two options live under Player Settings -> Extra Settings -> Queue Consume:
 consume on Previous (off by default) and consume the final track of the
 queue (on by default).
 
