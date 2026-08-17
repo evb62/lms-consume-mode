@@ -1,12 +1,12 @@
-package Plugins::ConsumeMode::Plugin;
+package Plugins::QueueConsume::Plugin;
 
-# Consume Mode for Lyrion Music Server
+# Queue Consume for Lyrion Music Server
 #
 # Reproduces MPD's "consume" behaviour: a track leaves the play queue once it
 # has finished playing or has been skipped with Next/Previous, but NOT when you
 # jump directly to some other track in the queue.
 #
-# Enabled per player in Settings -> Player -> Consume Mode.
+# Enabled per player in Settings -> Player -> Queue Consume.
 
 use strict;
 use warnings;
@@ -24,12 +24,12 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
 my $log = Slim::Utils::Log->addLogCategory({
-	category     => 'plugin.consumemode',
+	category     => 'plugin.queueconsume',
 	defaultLevel => 'WARN',
-	description  => 'PLUGIN_CONSUMEMODE',
+	description  => 'PLUGIN_QUEUECONSUME',
 });
 
-my $prefs = preferences('plugin.consumemode');
+my $prefs = preferences('plugin.queueconsume');
 
 # Runtime state, keyed on the master player's id:
 #   index    - queue position of the track we consider "currently playing"
@@ -41,7 +41,7 @@ my %state;
 # Slim::Player::Playlist::track() on current LMS, song() on older builds.
 my $TRACK_AT = Slim::Player::Playlist->can('track') || Slim::Player::Playlist->can('song');
 
-sub getDisplayName { 'PLUGIN_CONSUMEMODE' }
+sub getDisplayName { 'PLUGIN_QUEUECONSUME' }
 
 sub initPlugin {
 	my $class = shift;
@@ -52,10 +52,10 @@ sub initPlugin {
 	});
 
 	if (main::WEBUI) {
-		require Plugins::ConsumeMode::Settings;
-		require Plugins::ConsumeMode::PlayerSettings;
-		Plugins::ConsumeMode::Settings->new();
-		Plugins::ConsumeMode::PlayerSettings->new();
+		require Plugins::QueueConsume::Settings;
+		require Plugins::QueueConsume::PlayerSettings;
+		Plugins::QueueConsume::Settings->new();
+		Plugins::QueueConsume::PlayerSettings->new();
 	}
 
 	Slim::Control::Request::subscribe(
@@ -72,9 +72,9 @@ sub initPlugin {
 		[ ['stop', 'pause', 'power', 'playlistcontrol'] ]
 	);
 
-	# CLI / JSON-RPC:  <playerid> consumemode <0|1>   and   <playerid> consumemode ?
-	Slim::Control::Request::addDispatch(['consumemode', '_newvalue'], [1, 0, 0, \&_consumeCommand]);
-	Slim::Control::Request::addDispatch(['consumemode', '?'],         [1, 1, 0, \&_consumeQuery]);
+	# CLI / JSON-RPC:  <playerid> queueconsume <0|1>   and   <playerid> queueconsume ?
+	Slim::Control::Request::addDispatch(['queueconsume', '_newvalue'], [1, 0, 0, \&_consumeCommand]);
+	Slim::Control::Request::addDispatch(['queueconsume', '?'],         [1, 1, 0, \&_consumeQuery]);
 
 	$class->SUPER::initPlugin(@_);
 }
@@ -287,7 +287,7 @@ sub _findUrl {
 sub _consumeCommand {
 	my $request = shift;
 
-	if ($request->isNotCommand([['consumemode']])) {
+	if ($request->isNotCommand([['queueconsume']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -313,7 +313,7 @@ sub _consumeCommand {
 sub _consumeQuery {
 	my $request = shift;
 
-	if ($request->isNotQuery([['consumemode']])) {
+	if ($request->isNotQuery([['queueconsume']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -324,7 +324,7 @@ sub _consumeQuery {
 		return;
 	}
 
-	$request->addResult('_consumemode', $prefs->client($client->master)->get('consume') ? 1 : 0);
+	$request->addResult('_queueconsume', $prefs->client($client->master)->get('consume') ? 1 : 0);
 	$request->setStatusDone();
 }
 
