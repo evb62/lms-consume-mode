@@ -52,9 +52,7 @@ sub initPlugin {
 	});
 
 	if (main::WEBUI) {
-		require Plugins::QueueConsume::Settings;
 		require Plugins::QueueConsume::PlayerSettings;
-		Plugins::QueueConsume::Settings->new();
 		Plugins::QueueConsume::PlayerSettings->new();
 	}
 
