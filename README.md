@@ -8,6 +8,7 @@ Enabled per player, in the web UI.
 
 ## Use
 
+(Material Skin)
 Settings -> Player -> pick the player -> Extra Settings -> Queue Consume -> tick the box.
 
 Two options live under Player Settings -> Extra Settings -> Queue Consume:
