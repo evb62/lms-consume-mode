@@ -1,4 +1,4 @@
-package Plugins::ConsumeMode::PlayerSettings;
+package Plugins::QueueConsume::PlayerSettings;
 
 use strict;
 use warnings;
@@ -7,10 +7,10 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
 
-my $prefs = preferences('plugin.consumemode');
+my $prefs = preferences('plugin.queueconsume');
 
 sub name {
-	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_CONSUMEMODE');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_QUEUECONSUME');
 }
 
 sub page {
