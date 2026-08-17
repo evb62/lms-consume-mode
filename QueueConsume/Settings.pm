@@ -10,11 +10,12 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('plugin.queueconsume');
 
 sub name {
-	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_QUEUECONSUME');
+	return 'PLUGIN_QUEUECONSUME';
 }
 
+
 sub page {
-	return Slim::Web::HTTP::CSRF->protectURI('plugins/QueueConsume/settings/basic.html');
+	return 'plugins/QueueConsume/settings/basic.html';
 }
 
 sub prefs {
