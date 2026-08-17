@@ -3,7 +3,7 @@
 	<module>Plugins::ConsumeMode::Plugin</module>
 	<name>PLUGIN_CONSUMEMODE</name>
 	<description>PLUGIN_CONSUMEMODE_DESC</description>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<creator>Local</creator>
 	<targetApplication>
 		<id>SlimServer</id>
