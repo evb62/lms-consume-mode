@@ -1,16 +1,16 @@
-# Consume Mode for Lyrion Music Server
+# Queue Consume for Lyrion Music Server
 
-MPD-style consume for LMS 8.x / 9.x. A track leaves the play queue once it has
+Queue consume for LMS 8.x / 9.x. A track leaves the play queue once it has
 finished playing or has been skipped with Next. Jumping straight to another
-entry in the queue leaves the track you jumped away from alone.
+entry in the queue leaves alone the track you jumped away from.
 
 Enabled per player, in the web UI.
 
 ## Use
 
-Settings -> Player -> pick the player -> Consume Mode -> tick the box.
+Settings -> Player -> pick the player -> Queue Consume -> tick the box.
 
-Two global options live under Settings -> Advanced -> Consume Mode:
+Two global options live under  Server Settings -> Manage Plugins -> Queue Consume -> Settings:
 consume on Previous (off by default) and consume the final track of the
 queue (on by default).
 
@@ -38,4 +38,4 @@ reason for the transition.
   master.
 
 ## Installation
-- Add https://raw.githubusercontent.com/evb62/lms-consume-mode/main/public.xml to "Additional Repositories" to "Manage Plugins" settings page on LMS.
+- Add https://raw.githubusercontent.com/evb62/lms-consume-mode/main/public.xml to "Additional Repositories" to "Manage Plugins" settings page on LMS. Then enable this plugin.
