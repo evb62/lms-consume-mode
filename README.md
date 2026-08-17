@@ -16,15 +16,15 @@ queue (on by default).
 
 CLI / JSON-RPC:
 
-    <playerid> consumemode 1
-    <playerid> consumemode 0
-    <playerid> consumemode ?     -> _consumemode:0|1
+    <playerid> queueconsume 1
+    <playerid> queueconsume 0
+    <playerid> queueconsume ?     -> _queueconsume:0|1
 
 Omitting the value toggles.
 
 ## Troubleshooting
 
-Settings -> Advanced -> Logging, set `plugin.consumemode` to INFO, then watch
+Settings -> Advanced -> Logging, set `plugin.queueconsume` to INFO, then watch
 `config/logs/server.log`. Every removal is logged with the queue index and the
 reason for the transition.
 
@@ -38,4 +38,4 @@ reason for the transition.
   master.
 
 ## Installation
-- Add https://raw.githubusercontent.com/evb62/lms-consume-mode/main/public.xml to "Additional Repositories" to "Manage Plugins" settings page on LMS. Then enable this plugin.
+- Add https://raw.githubusercontent.com/evb62/lms-queue-consume/main/public.xml to "Additional Repositories" to "Manage Plugins" settings page on LMS. Then enable this plugin.
