@@ -1,4 +1,4 @@
-package Plugins::ConsumeMode::Settings;
+package Plugins::QueueConsume::Settings;
 
 use strict;
 use warnings;
@@ -7,14 +7,14 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
 
-my $prefs = preferences('plugin.consumemode');
+my $prefs = preferences('plugin.queueconsume');
 
 sub name {
-	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_CONSUMEMODE');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_QUEUECONSUME');
 }
 
 sub page {
-	return Slim::Web::HTTP::CSRF->protectURI('plugins/ConsumeMode/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/QueueConsume/settings/basic.html');
 }
 
 sub prefs {
