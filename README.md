@@ -12,7 +12,7 @@ Enabled per player, in the web UI.
 
 Settings -> Player -> pick the player -> Extra Settings -> Queue Consume -> tick the box.
 
-Two options live under Player Settings -> Extra Settings -> Queue Consume:
+Two global options live under Player Settings -> Extra Settings -> Queue Consume:
 consume on Previous (off by default) and consume the final track of the
 queue (on by default).
 
