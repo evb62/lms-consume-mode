@@ -35,9 +35,9 @@ sub handler {
 		$prefs->set('consumeLastTrack',  $paramRef->{pref_consumeLastTrack}  ? 1 : 0);
 	}
 
-	$paramRef->{pref_consume}           = $cprefs->get('consume');
-	$paramRef->{pref_consumeOnPrevious} = $prefs->get('consumeOnPrevious');
-	$paramRef->{pref_consumeLastTrack}  = $prefs->get('consumeLastTrack');
+	$paramRef->{prefs}{pref_consume}           = $cprefs->get('consume');
+	$paramRef->{prefs}{pref_consumeOnPrevious} = $prefs->get('consumeOnPrevious');
+	$paramRef->{prefs}{pref_consumeLastTrack}  = $prefs->get('consumeLastTrack');
 
 	return $class->SUPER::handler($client, $paramRef);
 }
