@@ -17,10 +17,10 @@ PLUGIN_QUEUECONSUME_ON_PREVIOUS
 	EN	Consume when skipping backwards
 
 PLUGIN_QUEUECONSUME_ON_PREVIOUS_DESC
-	EN	Also remove the current track when Previous is pressed. Off by default, so that Previous stays usable.
+	EN	Also remove the current track when Previous is pressed. Off by default, so that Previous stays usable. (Global option, valid for all players.)
 
 PLUGIN_QUEUECONSUME_LAST_TRACK
 	EN	Consume the final track
 
 PLUGIN_QUEUECONSUME_LAST_TRACK_DESC
-	EN	Remove the last entry of the queue when playback reaches the end, leaving the queue empty. Turn this off to keep the final track.
+	EN	Remove the last entry of the queue when playback reaches the end, leaving the queue empty. Turn this off to keep the final track. (Global option, valid for all players.)
