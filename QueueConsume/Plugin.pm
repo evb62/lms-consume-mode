@@ -94,6 +94,10 @@ sub _playlistCallback {
 	my $cmd = $request->getRequest(1) || return;
 	my $st  = $state{$client->id} ||= {};
 
+	main::DEBUGLOG && $log->is_debug && $log->debug(
+		$client->id . ": playlist notification cmd=$cmd"
+	);
+
 	if ($cmd eq 'jump' || $cmd eq 'index') {
 		my $index = $request->getParam('_index');
 		$index = '' unless defined $index;
@@ -109,6 +113,11 @@ sub _playlistCallback {
 			# an explicit queue position: the user picked a track, keep the old one
 			$st->{jump} = 'absolute';
 		}
+
+		main::DEBUGLOG && $log->is_debug && $log->debug(
+			$client->id . ": jump/index cmd, _index='$index', classified as '$st->{jump}'"
+		);
+
 		return;
 	}
 
@@ -157,7 +166,15 @@ sub _songChanged {
 
 	# repeat-one, or a restart of the same entry: never eat what is playing now
 	my $nowIndex = Slim::Player::Source::playingSongIndex($client);
-	$consume = 0 if defined $nowIndex && defined $prevIndex && $nowIndex == $prevIndex;
+	my $sameIndexGuard = (defined $nowIndex && defined $prevIndex && $nowIndex == $prevIndex) ? 1 : 0;
+	$consume = 0 if $sameIndexGuard;
+
+	main::DEBUGLOG && $log->is_debug && $log->debug(
+		$client->id . ": songChanged jump=" . (defined $jump ? $jump : 'undef')
+		. " prevIndex=" . (defined $prevIndex ? $prevIndex : 'undef')
+		. " nowIndex=" . (defined $nowIndex ? $nowIndex : 'undef')
+		. " sameIndexGuard=$sameIndexGuard consume=$consume"
+	);
 
 	if ($consume) {
 		main::INFOLOG && $log->is_info && $log->info(
