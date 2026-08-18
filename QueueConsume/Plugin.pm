@@ -60,7 +60,7 @@ sub initPlugin {
 		\&_playlistCallback,
 		[ ['playlist'],
 		  ['newsong', 'jump', 'index', 'stop', 'clear', 'load', 'loadtracks',
-		   'play', 'open', 'addtracks', 'inserttracks', 'delete', 'move', 'sync'] ]
+		   'addtracks', 'inserttracks', 'delete', 'move', 'sync'] ]
 	);
 
 	# A stop/pause/power/playlistcontrol issued by the user must not be mistaken
