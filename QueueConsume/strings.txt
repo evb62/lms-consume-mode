@@ -2,7 +2,7 @@ PLUGIN_QUEUECONSUME
 	EN	Queue Consume
 
 PLUGIN_QUEUECONSUME_DESC
-	EN	Removes each track from the play queue once it has finished playing or has been skipped. Jumping directly to another track in the queue leaves in place the track you jumped away from. Enable Queue Consume in each of your Settings -> Player -> Extra Settings -> Queue Consume.
+	EN	Removes each track from the play queue once it has finished playing or has been skipped. Jumping directly to another track in the queue leaves in place the track you jumped away from. Enable Queue Consume for each player in Settings -> Player -> Extra Settings -> Queue Consume.
 
 PLUGIN_QUEUECONSUME_BASIC_DESC
 	EN	The options below apply to every player.
