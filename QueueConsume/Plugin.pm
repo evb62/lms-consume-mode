@@ -6,7 +6,7 @@ package Plugins::QueueConsume::Plugin;
 # has finished playing or has been skipped with Next/Previous, but NOT when you
 # jump directly to some other track in the queue.
 #
-# Enabled per player in Settings -> Player -> Queue Consume.
+# Enabled per player in Settings -> Player -> Extra Settings -> Queue Consume.
 
 use strict;
 use warnings;
