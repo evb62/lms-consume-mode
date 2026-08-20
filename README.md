@@ -23,7 +23,7 @@ CLI / JSON-RPC:
     <playerid> queueconsume 0
     <playerid> queueconsume ?     -> _queueconsume:0|1
 
-Omitting the value toggles.
+Omitting the value toggles the current setting.
 
 <!-- ## Troubleshooting
 
