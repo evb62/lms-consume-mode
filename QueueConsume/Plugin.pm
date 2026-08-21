@@ -95,6 +95,24 @@ sub shutdownPlugin {
 	%state = ();
 }
 
+# --- ADD THIS CLEANUP FUNCTION FOR UNINSTALLATION ---
+sub uninstallPlugin {
+	my $class = shift;
+
+	main::INFOLOG && $log->is_info && $log->info("QueueConsume: Cleaning up preferences during uninstallation.");
+
+	# Completely wipe the plugin's preferences out of LMS cache and disk storage
+	if ($prefs) {
+		eval { $prefs->remove() };
+		if ($@) {
+			$log->error("QueueConsume: Failed to remove preferences: $@");
+		}
+	}
+
+	return 1;
+}
+# ----------------------------------------------------
+
 # ---------------------------------------------------------------- callbacks --
 
 sub _playlistCallback {
