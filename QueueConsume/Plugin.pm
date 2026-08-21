@@ -51,6 +51,18 @@ sub initPlugin {
 		consumeLastTrack  => 1,
 	});
 
+	# --- ADD THIS SAFEGUARD TO PREVENT STALE/CORRUPTED PREFS ---
+	# Force boolean matching if LMS returns empty or undefined values
+	for my $key (qw(consumeOnPrevious consumeLastTrack)) {
+		my $val = $prefs->get($key);
+		if ( !defined $val || $val eq '' ) {
+			# Reset to code defaults if the file block is broken
+			my $default = $key eq 'consumeLastTrack' ? 1 : 0;
+			$prefs->set($key, $default);
+		}
+	}
+	# ----------------------------------------------------------
+
 	if (main::WEBUI) {
 		require Plugins::QueueConsume::PlayerSettings;
 		Plugins::QueueConsume::PlayerSettings->new();
