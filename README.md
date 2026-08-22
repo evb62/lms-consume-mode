@@ -1,21 +1,17 @@
 # Queue Consume for Lyrion Music Server
 
-<!-- Queue consume for LMS 8.x / 9.x. -->
-A track leaves the play queue once it has
-finished playing or has been skipped with Next. Jumping straight to another
-entry in the queue does not consume the track you jumped away from.
-
-Enabled per player, in the web UI.
+Reproduces MPD's "consume" behaviour: a track leaves the play queue once it
+has finished playing or has been skipped with Next/Previous, but NOT when you
+jump directly to some other track in the queue.
 
 ## Use
 
 (Material Skin)
 
-Settings -> Player -> pick the player -> Extra Settings -> Queue Consume -> tick the box.
-
-Two global options live under Player Settings -> Extra Settings -> Queue Consume:
-- consume on Previous (off by default)
-- consume the final track of the queue (on by default).
+- Per player: Settings -> Player -> pick the player -> Extra Settings -> Queue Consume -> tick the box.
+- Global options (Manage Plugins -> Queue Consume -> Settings):
+  - Consume when skipping backwards (off by default)
+  - Consume the final track of the queue (on by default)
 
 CLI / JSON-RPC:
 
@@ -25,11 +21,11 @@ CLI / JSON-RPC:
 
 Omitting the value toggles the current setting.
 
-<!-- ## Troubleshooting
+## Troubleshooting
 
 Settings -> Advanced -> Logging, set `plugin.queueconsume` to INFO, then watch
 `config/logs/server.log`. Every removal is logged with the queue index and the
-reason for the transition. -->
+reason for the transition.
 
 ## Known limits
 
@@ -42,8 +38,8 @@ reason for the transition. -->
 
 ## Installation
 
-Scroll to the end of the "Manage Plugins" page in the LMS WebUI. Find the "Additional Repositories" and fill the line with the repository address: https://raw.githubusercontent.com/evb62/lms-plugins/main/public.xml.
+Scroll to the end of the "Manage Plugins" page in the LMS WebUI. Find the
+"Additional Repositories" and fill the line with the repository address:
+https://raw.githubusercontent.com/evb62/lms-plugins/main/public.xml.
 
 Accept the restart prompt, then enable the plugin.
-
-<!-- - Add https://raw.githubusercontent.com/evb62/lms-queue-consume/main/public.xml to "Additional Repositories" to "Manage Plugins" settings page on LMS. Then enable this plugin. -->
