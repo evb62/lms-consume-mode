@@ -1,12 +1,15 @@
 package Plugins::QueueConsume::Plugin;
 
-# Queue Consume for Lyrion Music Server
+# Queue Consume for Lyrion Music Server.
 #
 # Reproduces MPD's "consume" behaviour: a track leaves the play queue once it
-# has finished playing or has been skipped with Next/Previous, but NOT when you
-# jump directly to some other track in the queue.
+# has finished playing or has been skipped with Next/Previous, but NOT when
+# you jump directly to some other track in the queue.
 #
-# Enabled per player in Settings -> Player -> Extra Settings -> Queue Consume.
+# Per-player enabling lives in Settings -> Player -> Extra Settings -> Queue
+# Consume; the two global options (consume on Previous, consume the final
+# track) live on the plugin's server-wide settings page, reachable from the
+# "Settings" link in Manage Plugins.
 
 use strict;
 use warnings;
@@ -23,19 +26,24 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
+use Plugins::QueueConsume::Settings;
+use Plugins::QueueConsume::PlayerSettings;
+
 my $log = Slim::Utils::Log->addLogCategory({
 	category     => 'plugin.queueconsume',
 	defaultLevel => 'WARN',
 	description  => 'PLUGIN_QUEUECONSUME',
 });
 
+# Server-wide preferences; the per-player "consume" flag is read via
+# $prefs->client($client).
 my $prefs = preferences('plugin.queueconsume');
 
 # Runtime state, keyed on the master player's id:
-#   index    - queue position of the track we consider "currently playing"
-#   url      - its url, used to re-locate it if the queue shifted under us
-#   jump     - how we got to the current track: absolute | next | prev
-#   busy     - re-entrancy guard while we delete something ourselves
+#   index  - queue position of the track we consider "currently playing"
+#   url    - its url, used to re-locate it if the queue shifted under us
+#   jump   - how we got to the current track: absolute | next | prev
+#   busy   - re-entrancy guard while we delete something ourselves
 my %state;
 
 # Slim::Player::Playlist::track() on current LMS, song() on older builds.
@@ -47,27 +55,17 @@ sub initPlugin {
 	my $class = shift;
 
 	$prefs->init({
-		consumeOnPrevious => 0,
-		consumeLastTrack  => 1,
+		consume           => 0,   # per-player flag, default off
+		consumeOnPrevious => 0,   # global: also consume when skipping backwards
+		consumeLastTrack  => 1,   # global: consume the final track of the queue
 	});
 
-	# --- ADD THIS SAFEGUARD TO PREVENT STALE/CORRUPTED PREFS ---
-	# Force boolean matching if LMS returns empty or undefined values
-	for my $key (qw(consumeOnPrevious consumeLastTrack)) {
-		my $val = $prefs->get($key);
-		if ( !defined $val || $val eq '' ) {
-			# Reset to code defaults if the file block is broken
-			my $default = $key eq 'consumeLastTrack' ? 1 : 0;
-			$prefs->set($key, $default);
-		}
-	}
-	# ----------------------------------------------------------
-
 	if (main::WEBUI) {
-		require Plugins::QueueConsume::PlayerSettings;
-		Plugins::QueueConsume::PlayerSettings->new();
+		Plugins::QueueConsume::Settings->new;
+		Plugins::QueueConsume::PlayerSettings->new;
 	}
 
+	# Track queue mutations so we can consume the track we moved away from.
 	Slim::Control::Request::subscribe(
 		\&_playlistCallback,
 		[ ['playlist'],
@@ -75,16 +73,16 @@ sub initPlugin {
 		   'addtracks', 'inserttracks', 'delete', 'move', 'sync'] ]
 	);
 
-	# A stop/pause/power/playlistcontrol issued by the user must not be mistaken
-	# for "the queue ran out of tracks".
+	# A stop/pause/power/playlistcontrol issued by the user must not be
+	# mistaken for "the queue ran out of tracks".
 	Slim::Control::Request::subscribe(
 		\&_transportCallback,
 		[ ['stop', 'pause', 'power', 'playlistcontrol'] ]
 	);
 
 	# CLI / JSON-RPC:  <playerid> queueconsume <0|1>   and   <playerid> queueconsume ?
-	Slim::Control::Request::addDispatch(['queueconsume', '_newvalue'], [1, 0, 0, \&_consumeCommand]);
-	Slim::Control::Request::addDispatch(['queueconsume', '?'],         [1, 1, 0, \&_consumeQuery]);
+	Slim::Control::Request::addDispatch(['queueconsume', '_newvalue'], [0, 1, 1, \&_consumeCommand]);
+	Slim::Control::Request::addDispatch(['queueconsume', '?'],         [1, 0, 0, \&_consumeQuery]);
 
 	$class->SUPER::initPlugin(@_);
 }
@@ -95,23 +93,17 @@ sub shutdownPlugin {
 	%state = ();
 }
 
-# --- ADD THIS CLEANUP FUNCTION FOR UNINSTALLATION ---
+# Cleanup hook: drop the plugin's preferences when LMS uninstalls it.
 sub uninstallPlugin {
-	my $class = shift;
+	main::INFOLOG && $log->is_info && $log->info('QueueConsume: removing preferences on uninstall');
 
-	main::INFOLOG && $log->is_info && $log->info("QueueConsume: Cleaning up preferences during uninstallation.");
-
-	# Completely wipe the plugin's preferences out of LMS cache and disk storage
 	if ($prefs) {
 		eval { $prefs->remove() };
-		if ($@) {
-			$log->error("QueueConsume: Failed to remove preferences: $@");
-		}
+		$log->error("Failed to remove preferences: $@") if $@;
 	}
 
 	return 1;
 }
-# ----------------------------------------------------
 
 # ---------------------------------------------------------------- callbacks --
 
@@ -129,6 +121,8 @@ sub _playlistCallback {
 		$index = '' unless defined $index;
 		$index =~ s/^\s+//;
 
+		# Classify how the user moved: relative jumps (Next/Previous) vs an
+		# explicit queue position (the track jumped away from stays in place).
 		if ($index =~ /^(?:\+|%2B)/i) {
 			$st->{jump} = 'next';
 		}
@@ -136,7 +130,6 @@ sub _playlistCallback {
 			$st->{jump} = 'prev';
 		}
 		else {
-			# an explicit queue position: the user picked a track, keep the old one
 			$st->{jump} = 'absolute';
 		}
 
@@ -157,7 +150,7 @@ sub _playlistCallback {
 		return;
 	}
 
-	# any other queue mutation: just refresh our idea of what is playing
+	# Any other queue mutation: just refresh our idea of what is playing.
 	_sync($client);
 }
 
@@ -167,7 +160,7 @@ sub _transportCallback {
 	my $client = $request->client() || return;
 	$client = $client->master();
 
-	# the user is driving, so cancel any pending end-of-queue consumption
+	# The user is driving, so cancel any pending end-of-queue consumption.
 	Slim::Utils::Timers::killTimers($client, \&_consumeLast);
 }
 
@@ -190,7 +183,7 @@ sub _songChanged {
 	$consume = 0 if $jump && $jump eq 'absolute';
 	$consume = 0 if $jump && $jump eq 'prev' && !$prefs->get('consumeOnPrevious');
 
-	# repeat-one, or a restart of the same entry: never eat what is playing now
+	# Repeat-one, or a restart of the same entry: never eat what is playing now.
 	my $nowIndex = Slim::Player::Source::playingSongIndex($client);
 	$consume = 0 if defined $nowIndex && defined $prevIndex && $nowIndex == $prevIndex;
 
@@ -207,8 +200,10 @@ sub _songChanged {
 	_sync($client);
 }
 
-# Playback stopped. If we were sitting on the last entry of the queue and the
-# user did not press stop/pause, the queue ran out - consume that final track.
+# Playback stopped. If we were sitting on the last entry of the queue, the
+# queue ran out - consume that final track. The removal is deferred by half a
+# second so an explicit stop/pause notification arriving right after this one
+# can still cancel it (see _transportCallback).
 sub _maybeConsumeLast {
 	my $client = shift;
 	my $st = $state{$client->id} ||= {};
@@ -221,8 +216,6 @@ sub _maybeConsumeLast {
 	my $count = Slim::Player::Playlist::count($client) || 0;
 	return unless $count && $st->{index} == $count - 1;
 
-	# Deferred, so an explicit stop/pause notification arriving right after this
-	# one still has a chance to cancel it.
 	Slim::Utils::Timers::killTimers($client, \&_consumeLast);
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.5, \&_consumeLast);
 }
@@ -255,7 +248,8 @@ sub _removeTrack {
 	my $count = Slim::Player::Playlist::count($client) || 0;
 	return unless $count;
 
-	# the queue may have shifted since we recorded this position
+	# The queue may have shifted since we recorded this position: re-locate
+	# the recorded url and bail out if it is gone.
 	if (defined $url) {
 		my $at = _urlAt($client, $index);
 		if (!defined $at || $at ne $url) {
@@ -266,6 +260,7 @@ sub _removeTrack {
 
 	return if !defined $index || $index < 0 || $index >= $count;
 
+	# Unless forced (final-track consumption), never remove what is playing.
 	unless ($force) {
 		my $now = Slim::Player::Source::playingSongIndex($client);
 		return if defined $now && $now == $index;
@@ -335,6 +330,7 @@ sub _consumeCommand {
 	my $cprefs   = $prefs->client($client);
 	my $newvalue = $request->getParam('_newvalue');
 
+	# Without a value, toggle the current setting.
 	$newvalue = $cprefs->get('consume') ? 0 : 1 unless defined $newvalue;
 
 	$cprefs->set('consume', $newvalue ? 1 : 0);
